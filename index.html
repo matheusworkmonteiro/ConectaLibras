@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2765dc">
+  <title>ConectaLibras — Aprender é se conectar</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><img src="assets/gatinho.svg" alt="Gatinho branco e azul, mascote do ConectaLibras"><div><strong>Conecta<span>Libras</span></strong><small>Aprender é se conectar</small></div></div>
+      <nav aria-label="Navegação principal" id="nav">
+        <button data-page="inicio" class="active">⌂ <span>Início</span></button>
+        <button data-page="biblioteca">▦ <span>Biblioteca de sinais</span></button>
+        <button data-page="flashcards">▤ <span>Flashcards</span></button>
+        <button data-page="quiz">✦ <span>Quiz e desafios</span></button>
+        <button data-page="situacoes">♧ <span>Situações escolares</span></button>
+        <button data-page="listas">♡ <span>Minhas listas</span></button>
+        <button data-page="painel">▥ <span>Meu progresso</span></button>
+        <button data-page="professor">⚙ <span>Área do professor</span></button>
+      </nav>
+      <div class="aside-note">💙 Libras é uma língua completa, com gramática e expressão próprias. Aprenda com a comunidade surda.</div>
+    </aside>
+    <div class="main-wrap">
+      <header class="topbar"><button class="menu" id="menuBtn" aria-label="Abrir menu">☰</button><span class="eyebrow">ESCOLA PEDRO APÓSTOLO • PROJETO FECCI</span><div class="top-actions"><label class="sr-only" for="userName">Seu nome</label><input id="userName" placeholder="Seu nome" maxlength="35" title="Nome local para o progresso"><span class="avatar">🐱</span></div></header>
+      <main id="content" tabindex="-1"></main>
+      <footer>ConectaLibras • Protótipo educativo • Conteúdos em Libras devem ser conferidos por profissionais fluentes e preferencialmente pessoas surdas.</footer>
+    </div>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>

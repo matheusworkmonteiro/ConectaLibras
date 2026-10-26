@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" role="img" aria-label="Gatinho branco com detalhes azuis sorrindo">
+ <circle cx="130" cy="132" r="119" fill="#dcecff"/>
+ <path d="M60 114 57 34l53 34M200 114l3-80-53 34" fill="#fff" stroke="#2661cb" stroke-width="9" stroke-linejoin="round"/>
+ <path d="M71 86 69 54l24 25M189 86l2-32-24 25" fill="#9bc5ff"/>
+ <ellipse cx="130" cy="139" rx="91" ry="82" fill="#fff" stroke="#2661cb" stroke-width="8"/>
+ <ellipse cx="94" cy="128" rx="10" ry="14" fill="#2357ae"/><ellipse cx="166" cy="128" rx="10" ry="14" fill="#2357ae"/>
+ <path d="m120 153 10 8 10-8z" fill="#ef9bb3"/><path d="M130 161q-11 19-26 3m26-3q11 19 26 3" stroke="#2357ae" stroke-width="5" fill="none" stroke-linecap="round"/>
+ <path d="M78 157 38 146m39 23-40 4m145-16 40-11m-39 23 40 4" stroke="#6194dd" stroke-width="4" stroke-linecap="round"/>
+ <circle cx="70" cy="151" r="13" fill="#ffd7e2" opacity=".75"/><circle cx="190" cy="151" r="13" fill="#ffd7e2" opacity=".75"/>
+ <path d="M109 70q21-16 42 0" stroke="#80b5fa" stroke-width="8" fill="none" stroke-linecap="round"/>
+ <path d="M95 216q-35 15-26 30m96-30q35 15 26 30" stroke="#2661cb" stroke-width="10" stroke-linecap="round" fill="none"/>
+</svg>
