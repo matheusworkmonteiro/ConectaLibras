@@ -1,16 +1,33 @@
-/* ConectaLibras — protótipo local, sem servidor. Nenhum sinal é demonstrado sem vídeo validado. */
+/* ConectaLibras — protótipo local, sem servidor. */
 const BASE = [
-  ['Olá','Saudações','Cumprimentar alguém','👋'],['Bom dia','Saudações','Cumprimento pela manhã','☀️'],['Obrigado','Saudações','Agradecer','💙'],['Por favor','Saudações','Fazer um pedido com gentileza','🤝'],
-  ['Professor','Sala de aula','Pessoa que ensina','👩‍🏫'],['Aluno','Sala de aula','Pessoa que aprende','🎒'],['Livro','Sala de aula','Material de leitura','📚'],['Escrever','Sala de aula','Registrar algo por escrito','✏️'],
-  ['Somar','Matemática','Operação de adição','➕'],['Número','Matemática','Representação de quantidade','🔢'],['Igual','Matemática','Expressa igualdade','🟰'],
-  ['Água','Ciências','Substância essencial à vida','💧'],['Planta','Ciências','Ser vivo vegetal','🌱'],['Animal','Ciências','Ser vivo do reino animal','🐾'],
-  ['Ler','Português','Acompanhar e compreender um texto','📖'],['Palavra','Português','Unidade da linguagem','📝'],
-  ['Feliz','Emoções','Sentimento de alegria','😄'],['Triste','Emoções','Sentimento de tristeza','😢'],['Ajuda','Emoções','Solicitar apoio','🫶'],
-  ['Esperar','Comandos','Pedir para aguardar','⏳'],['Atenção','Comandos','Concentrar-se','👀'],['Repetir','Comandos','Fazer novamente','🔁'],
-  ['Recreio','Rotina escolar','Intervalo na escola','🛝'],['Banheiro','Rotina escolar','Espaço de higiene','🚻'],['Lanche','Rotina escolar','Momento de alimentação','🍎']
-].map((x,i)=>({id:'base'+i,word:x[0],category:x[1],description:x[2],emoji:x[3],video:''}));
+  ['Olá','Saudações','Cumprimentar alguém','👋'],
+  ['Bom dia','Saudações','Cumprimento pela manhã','☀️'],
+  ['Obrigado','Saudações','Agradecer','💙'],
+  ['Por favor','Saudações','Fazer um pedido com gentileza','🤝'],
+  ['Professor','Sala de aula','Pessoa que ensina','👩‍🏫'],
+  ['Aluno','Sala de aula','Pessoa que aprende','🎒'],
+  ['Livro','Sala de aula','Material de leitura','📚'],
+  ['Escrever','Sala de aula','Registrar algo por escrito','✏️'],
+  ['Somar','Matemática','Operação de adição','➕'],
+  ['Número','Matemática','Representação de quantidade','🔢'],
+  ['Igual','Matemática','Expressa igualdade','🟰'],
+  ['Água','Ciências','Substância essencial à vida','💧'],
+  ['Planta','Ciências','Ser vivo vegetal','🌱'],
+  ['Animal','Ciências','Ser vivo do reino animal','🐾'],
+  ['Ler','Português','Acompanhar e compreender um texto','📖'],
+  ['Palavra','Português','Unidade da linguagem','📝'],
+  ['Feliz','Emoções','Sentimento de alegria','😄'],
+  ['Triste','Emoções','Sentimento de tristeza','😢'],
+  ['Ajuda','Emoções','Solicitar apoio','🫶'],
+  ['Esperar','Comandos','Pedir para aguardar','⏳'],
+  ['Atenção','Comandos','Concentrar-se','👀'],
+  ['Repetir','Comandos','Fazer novamente','🔁'],
+  ['Recreio','Rotina escolar','Intervalo na escola','🛝'],
+  ['Banheiro','Rotina escolar','Espaço de higiene','🚻'],
+  ['Lanche','Rotina escolar','Momento de alimentação','🍎']
+].map((x, i) => ({ id: 'base' + i, word: x[0], category: x[1], description: x[2], emoji: x[3], video: '' }));
 
-const CATS = [...new Set(BASE.map(x=>x.category))];
+const CATS = [...new Set(BASE.map(x => x.category))];
 const KEY = 'conectalibras-v1';
 const fresh = () => ({
   name: '', points: 0, answered: 0, correct: 0,
@@ -18,7 +35,6 @@ const fresh = () => ({
   custom: [], videos: {}, history: [], daily: '', challengeDone: '', feedback: []
 });
 
-// Inicialização segura dos dados locais
 let data = fresh();
 try {
   const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
@@ -29,7 +45,6 @@ try {
   if (!Array.isArray(data.favorites)) data.favorites = [];
   if (!data.lists || typeof data.lists !== 'object') data.lists = { 'Minha aula': [] };
 } catch (e) {
-  console.warn('Erro ao carregar dados locais, a reiniciar:', e);
   data = fresh();
 }
 
@@ -39,19 +54,15 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const all = () => [...BASE, ...(Array.isArray(data.custom) ? data.custom : [])];
 const get = id => all().find(x => x.id === id);
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch { toast('Armazenamento cheio. Use vídeos menores ou links externos.'); } };
-const toast = msg => { const t = $('toast'); if(!t) return; t.textContent = msg; t.style.display = 'block'; clearTimeout(toast.timer); toast.timer = setTimeout(() => t.style.display = 'none', 3300); };
-const head = (title, desc, extra='') => `<div class="page-header"><div><h1 class="page-title">${title}</h1><p class="intro">${desc}</p></div>${extra}</div>`;
-const btn = (text, action, kind='outline') => `<button class="btn ${kind}" data-action="${action}">${text}</button>`;
-const today = () => new Date().toLocaleDateString('en-CA');
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) { toast('Armazenamento cheio.'); } };
+const toast = msg => { const t = $('toast'); if (!t) return; t.textContent = msg; t.style.display = 'block'; clearTimeout(toast.timer); toast.timer = setTimeout(() => t.style.display = 'none', 3300); };
+const head = (title, desc, extra = '') => `<div class="page-header"><div><h1 class="page-title">${title}</h1><p class="intro">${desc}</p></div>${extra}</div>`;
+const btn = (text, action, kind = 'outline') => `<button class="btn ${kind}" data-action="${action}">${text}</button>`;
 
-// ==========================================
-// SUPORTE A REPRODUÇÃO DE VÍDEO (MODAL / LIBRAS)
-// ==========================================
 function parseVideoUrl(url) {
   if (!url || typeof url !== 'string') return null;
-  const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
-  if (yt) return { type: 'youtube', src: `https://www.youtube.com/embed/${yt[1]}?autoplay=1&rel=0` };
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+  if (m && m[1]) return { type: 'youtube', src: 'https://www.youtube.com/embed/' + m[1] + '?autoplay=1&rel=0' };
   return { type: 'file', src: url };
 }
 
@@ -70,56 +81,41 @@ function openVideoModal(id) {
   let playerHtml = '';
   if (parsed) {
     if (parsed.type === 'youtube') {
-      playerHtml = `
-        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px;background:#000;">
-          <iframe src="${parsed.src}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>`;
+      playerHtml = '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px;background:#000;"><iframe src="' + parsed.src + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
     } else {
-      playerHtml = `
-        <video id="modalPlayer" style="width:100%;max-height:55vh;border-radius:14px;background:#000;" controls autoplay playsinline src="${esc(parsed.src)}">O seu navegador não suporta vídeos.</video>
-        <div style="display:flex;gap:8px;margin-top:10px;justify-content:center;">
-          <button class="btn outline small" onclick="document.getElementById('modalPlayer').playbackRate=0.5">0.5×</button>
-          <button class="btn outline small" onclick="document.getElementById('modalPlayer').playbackRate=0.75">0.75×</button>
-          <button class="btn outline small" onclick="document.getElementById('modalPlayer').playbackRate=1">1.0×</button>
-        </div>`;
+      playerHtml = '<video id="modalPlayer" style="width:100%;max-height:55vh;border-radius:14px;background:#000;" controls autoplay playsinline src="' + esc(parsed.src) + '">Vídeo indisponível.</video>' +
+        '<div style="display:flex;gap:8px;margin-top:10px;justify-content:center;">' +
+        '<button class="btn outline small" onclick="document.getElementById(\'modalPlayer\').playbackRate=0.5">0.5×</button>' +
+        '<button class="btn outline small" onclick="document.getElementById(\'modalPlayer\').playbackRate=0.75">0.75×</button>' +
+        '<button class="btn outline small" onclick="document.getElementById(\'modalPlayer\').playbackRate=1">1.0×</button>' +
+        '</div>';
     }
   } else {
-    playerHtml = `
-      <div style="background:#f0f5ff;border:2px dashed #90b8f8;border-radius:16px;padding:24px;text-align:center;">
-        <div style="font-size:46px;margin-bottom:8px">🤟</div>
-        <h3 style="margin:0 0 6px 0;color:#1d3963">Vídeo ainda não associado</h3>
-        <p style="color:#52677f;margin:0 0 16px 0;font-size:14px">O vídeo demonstrativo para "<strong>${esc(x.word)}</strong>" ainda não foi configurado.</p>
-        <div style="display:flex;flex-direction:column;gap:12px;max-width:400px;margin:0 auto;">
-          <a href="https://www.youtube.com/results?search_query=sinal+libras+${encodeURIComponent(x.word)}" target="_blank" rel="noopener" style="text-decoration:none;padding:10px 16px;background:#e52d27;color:#fff;border-radius:10px;font-weight:600;font-size:14px;display:inline-block">▶ Pesquisar sinal de "${esc(x.word)}" no YouTube</a>
-          <div style="text-align:left;background:#ffffff;padding:12px;border-radius:10px;border:1px solid #dbe5f1;">
-            <label style="font-size:12px;color:#334e68;font-weight:bold;display:block;margin-bottom:4px">Associar link agora (YouTube ou ficheiro MP4 direto):</label>
-            <div style="display:flex;gap:6px;">
-              <input id="quickVideoInput" class="field" style="padding:6px 10px;font-size:13px;flex:1" placeholder="https://...">
-              <button class="btn small" style="white-space:nowrap" onclick="quickSaveVideo('${x.id}')">Salvar</button>
-            </div>
-          </div>
-        </div>
-      </div>`;
+    playerHtml = '<div style="background:#f0f5ff;border:2px dashed #90b8f8;border-radius:16px;padding:24px;text-align:center;">' +
+      '<div style="font-size:46px;margin-bottom:8px">🤟</div>' +
+      '<h3 style="margin:0 0 6px 0;color:#1d3963">Vídeo ainda não adicionado</h3>' +
+      '<p style="color:#52677f;margin:0 0 16px 0;font-size:14px">O vídeo demonstrativo para "<strong>' + esc(x.word) + '</strong>" ainda não foi associado.</p>' +
+      '<div style="display:flex;flex-direction:column;gap:12px;max-width:400px;margin:0 auto;">' +
+      '<a href="https://www.youtube.com/results?search_query=sinal+libras+' + encodeURIComponent(x.word) + '" target="_blank" rel="noopener" style="text-decoration:none;padding:10px 16px;background:#e52d27;color:#fff;border-radius:10px;font-weight:600;font-size:14px;display:inline-block">▶ Pesquisar sinal no YouTube</a>' +
+      '<div style="text-align:left;background:#ffffff;padding:12px;border-radius:10px;border:1px solid #dbe5f1;">' +
+      '<label style="font-size:12px;color:#334e68;font-weight:bold;display:block;margin-bottom:4px">Associar link direto ou YouTube:</label>' +
+      '<div style="display:flex;gap:6px;">' +
+      '<input id="quickVideoInput" class="field" style="padding:6px 10px;font-size:13px;flex:1" placeholder="https://...">' +
+      '<button class="btn small" style="white-space:nowrap" onclick="quickSaveVideo(\'' + x.id + '\')">Salvar</button>' +
+      '</div></div></div></div>';
   }
 
-  modal.innerHTML = `
-    <div onclick="closeVideoModal()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,28,48,0.72);backdrop-filter:blur(3px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;">
-      <div onclick="event.stopPropagation()" style="background:#ffffff;border-radius:20px;max-width:620px;width:100%;padding:22px;box-shadow:0 20px 45px rgba(0,0,0,0.3);position:relative;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #edf2f7;padding-bottom:10px;">
-          <div>
-            <span style="background:#e0edff;color:#1958b7;font-size:11px;font-weight:bold;padding:3px 10px;border-radius:20px;text-transform:uppercase;">${esc(x.category)}</span>
-            <h2 style="margin:6px 0 0 0;color:#183252;font-size:22px;display:flex;align-items:center;gap:8px;">${esc(x.emoji)} Sinal: ${esc(x.word)}</h2>
-          </div>
-          <button onclick="closeVideoModal()" aria-label="Fechar" style="background:none;border:none;font-size:28px;cursor:pointer;color:#8a99ad;line-height:1;padding:0 6px;">&times;</button>
-        </div>
-        <p style="margin:0 0 14px 0;color:#4a5d78;font-size:14px;"><strong>Significado:</strong> ${esc(x.description)}</p>
-        ${playerHtml}
-        <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;">
-          <small style="color:#7e8e9f;font-size:12px">Observe a configuração de mão, movimento e expressão facial.</small>
-          <button class="btn outline small" onclick="closeVideoModal()">Fechar</button>
-        </div>
-      </div>
-    </div>`;
+  modal.innerHTML = '<div onclick="closeVideoModal()" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,28,48,0.72);backdrop-filter:blur(3px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;">' +
+    '<div onclick="event.stopPropagation()" style="background:#ffffff;border-radius:20px;max-width:620px;width:100%;padding:22px;box-shadow:0 20px 45px rgba(0,0,0,0.3);position:relative;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #edf2f7;padding-bottom:10px;">' +
+    '<div><span style="background:#e0edff;color:#1958b7;font-size:11px;font-weight:bold;padding:3px 10px;border-radius:20px;text-transform:uppercase;">' + esc(x.category) + '</span>' +
+    '<h2 style="margin:6px 0 0 0;color:#183252;font-size:22px;display:flex;align-items:center;gap:8px;">' + esc(x.emoji) + ' Sinal: ' + esc(x.word) + '</h2></div>' +
+    '<button onclick="closeVideoModal()" aria-label="Fechar" style="background:none;border:none;font-size:28px;cursor:pointer;color:#8a99ad;line-height:1;padding:0 6px;">&times;</button></div>' +
+    '<p style="margin:0 0 14px 0;color:#4a5d78;font-size:14px;"><strong>Significado:</strong> ' + esc(x.description) + '</p>' +
+    playerHtml +
+    '<div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;">' +
+    '<small style="color:#7e8e9f;font-size:12px">Observe a configuração de mão, movimento e expressão facial.</small>' +
+    '<button class="btn outline small" onclick="closeVideoModal()">Fechar</button></div></div></div>';
   modal.style.display = 'block';
 }
 
@@ -147,21 +143,21 @@ window.quickSaveVideo = function(id) {
   }
 };
 
-function navigate(p){
+function navigate(p) {
   page = p;
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.page === p));
   const c = $('content');
   if (c) {
     c.innerHTML = render();
-    try { c.focus({ preventScroll: true }); } catch(_) {}
+    try { c.focus({ preventScroll: true }); } catch (_) {}
   }
   window.scrollTo(0, 0);
   const sb = document.querySelector('.sidebar');
   if (sb) sb.classList.remove('open');
 }
 
-function render(){
-  switch(page){
+function render() {
+  switch (page) {
     case 'biblioteca': return library();
     case 'flashcards': return flashcards();
     case 'quiz': return quizPage();
@@ -174,18 +170,18 @@ function render(){
   }
 }
 
-function home(){
+function home() {
   return `<section class="hero"><div><span class="pill">✨ BEM-VINDO AO CONECTALIBRAS</span><h1>Pequenos sinais,<br>grandes conexões!</h1><p>Explore palavras do cotidiano escolar, monte suas listas e aprenda em desafios interativos com nosso gatinho azul.</p>${btn('Explorar biblioteca →','go:biblioteca','light')}</div><img src="assets/gatinho.svg" alt="Mascote gatinho branco e azul"></section><div class="stats"><div class="stat"><div class="number">${all().length}</div><div class="label">Palavras para explorar</div></div><div class="stat"><div class="number">${data.points} ⭐</div><div class="label">Pontos conquistados</div></div><div class="stat"><div class="number">${data.completed.length}</div><div class="label">Palavras marcadas como estudadas</div></div></div><div class="section-head"><div><h2>O que vamos aprender hoje?</h2><p>Escolha uma atividade e comece!</p></div></div><div class="features">${[['📚','Biblioteca de sinais','Encontre vocabulário por disciplina.','biblioteca'],['🃏','Flashcards','Memorize palavras e conceitos.','flashcards'],['🎯','Quiz e desafios','Teste seu conhecimento e ganhe pontos.','quiz'],['🧩','Situações reais','Reflita sobre a comunicação na escola.','situacoes'],['💙','Minhas listas','Organize palavras para suas aulas.','listas'],['📊','Meu progresso','Acompanhe sua evolução local.','painel']].map(f=>`<button class="feature" data-action="go:${f[3]}"><span class="emoji">${f[0]}</span><h3>${f[1]}</h3><p>${f[2]}</p></button>`).join('')}</div><div class="panel notice" style="margin-top:24px"><strong>Importante:</strong> aprender o significado em português não equivale a dominar o sinal em Libras. Os vídeos podem ser adicionados pelo professor após validação; não usamos desenhos inventados das mãos.</div>`;
 }
 
-function library(){
-  let items = all().filter(x => (cat==='Todas'||x.category===cat) && (`${x.word} ${x.description}`.toLowerCase().includes(filter.toLowerCase())));
+function library() {
+  let items = all().filter(x => (cat === 'Todas' || x.category === cat) && (`${x.word} ${x.description}`.toLowerCase().includes(filter.toLowerCase())));
   return `${head('Biblioteca de sinais','Explore o vocabulário organizado por contextos escolares.')}
   <div class="filters">
     <input id="search" placeholder="🔎 Buscar palavra ou assunto..." value="${esc(filter)}" aria-label="Buscar palavra">
     <select id="category" aria-label="Categoria">
       <option>Todas</option>
-      ${[...new Set(all().map(x=>x.category))].map(x=>`<option ${cat===x?'selected':''}>${esc(x)}</option>`).join('')}
+      ${[...new Set(all().map(x => x.category))].map(x => `<option ${cat === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}
     </select>
   </div>
   <div class="cards">
@@ -201,9 +197,9 @@ function library(){
         <h3>${esc(x.word)}</h3>
         <p class="muted">${esc(x.description)}</p>
         <div class="actions" style="display:flex;flex-wrap:wrap;gap:6px">
-          ${btn(hasVid ? '🤟 Ver sinal' : '🤟 Ver em Libras', 'playvideo:'+x.id, hasVid ? 'primary' : '')}
-          ${btn('Ver ficha', 'detail:'+x.id)}
-          ${btn(data.favorites.includes(x.id)?'♥ Salvo':'♡ Salvar', 'favorite:'+x.id)}
+          ${btn(hasVid ? '🤟 Ver sinal' : '🤟 Ver em Libras', 'playvideo:' + x.id, hasVid ? 'primary' : '')}
+          ${btn('Ver ficha', 'detail:' + x.id)}
+          ${btn(data.favorites.includes(x.id) ? '♥ Salvo' : '♡ Salvar', 'favorite:' + x.id)}
         </div>
       </article>`;
     }).join('') || '<p class="empty">Nenhuma palavra encontrada.</p>'}
@@ -211,30 +207,26 @@ function library(){
 }
 
 let detailId = 'base0';
-function signDetail(){
+function signDetail() {
   const x = get(detailId);
-  if(!x) return library();
+  if (!x) return library();
   const url = (data.videos && data.videos[x.id]) || x.video;
   const parsed = parseVideoUrl(url);
 
   let mediaHtml = '';
   if (parsed) {
     if (parsed.type === 'youtube') {
-      mediaHtml = `
-        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px;background:#000;">
-          <iframe src="${parsed.src}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>`;
+      mediaHtml = '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px;background:#000;"><iframe src="' + parsed.src + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
     } else {
-      mediaHtml = `
-        <video class="video" controls playsinline src="${esc(parsed.src)}">O seu navegador não suporta vídeos.</video>
-        <div class="actions">
-          <button class="btn outline small" data-action="speed:0.5">0,5×</button>
-          <button class="btn outline small" data-action="speed:0.75">0,75×</button>
-          <button class="btn outline small" data-action="speed:1">1×</button>
-        </div>`;
+      mediaHtml = '<video class="video" controls playsinline src="' + esc(parsed.src) + '">O seu navegador não suporta vídeos.</video>' +
+        '<div class="actions">' +
+        '<button class="btn outline small" data-action="speed:0.5">0,5×</button>' +
+        '<button class="btn outline small" data-action="speed:0.75">0,75×</button>' +
+        '<button class="btn outline small" data-action="speed:1">1×</button>' +
+        '</div>';
     }
   } else {
-    mediaHtml = `<div class="notice">O vídeo demonstrativo desta palavra ainda não foi associado. Insira uma gravação validada na área do professor.</div>`;
+    mediaHtml = '<div class="notice">O vídeo demonstrativo desta palavra ainda não foi associado. Insira uma gravação validada na área do professor.</div>';
   }
 
   return `${head(esc(x.word),esc(x.category),btn('← Biblioteca','go:biblioteca'))}
@@ -245,8 +237,8 @@ function signDetail(){
       <p>${esc(x.description)}</p>
       <div class="chips"><span class="chip">${esc(x.category)}</span></div>
       <div class="actions">
-        ${btn('✓ Marcar como estudado','complete:'+x.id,'')}
-        ${btn('♡ Favoritar','favorite:'+x.id)}
+        ${btn('✓ Marcar como estudado','complete:' + x.id,'')}
+        ${btn('♡ Favoritar','favorite:' + x.id)}
       </div>
     </div>
     <div class="panel">
@@ -255,29 +247,144 @@ function signDetail(){
       <p class="muted">Observe configuração de mão, movimento, localização, orientação e expressões não manuais.</p>
       <label class="field-group">
         <span>Adicionar esta palavra à lista</span>
-        <select id="listToAdd">${Object.keys(data.lists).map(n=>`<option>${esc(n)}</option>`).join('')}</select>
+        <select id="listToAdd">${Object.keys(data.lists).map(n => `<option>${esc(n)}</option>`).join('')}</select>
       </label>
-      ${btn('Adicionar à lista','addtolist:'+x.id)}
+      ${btn('Adicionar à lista','addtolist:' + x.id)}
     </div>
   </div>`;
 }
 
-function flashcards(){const items=all();const x=items[flashIndex%items.length];return `${head('Flashcards','Estude palavras do cotidiano. Vire o cartão para descobrir a explicação.') }<div class="panel flash center" data-action="flip" role="button" tabindex="0" aria-label="Virar flashcard"><span class="badge">CARTÃO ${(flashIndex%items.length)+1} DE ${items.length}</span><span style="font-size:55px;margin:22px">${esc(x.emoji)}</span><div class="word">${flashRevealed?esc(x.description):esc(x.word)}</div><div class="hint">${flashRevealed?'Conceito em português — pratique o sinal com um vídeo validado.':'Toque para virar o cartão'}</div></div><div class="center"><div class="actions" style="justify-content:center">${btn('← Anterior','flashprev')}${btn('Virar cartão','flip','')}${btn('Próximo →','flashnext')}</div><p class="muted">Os cartões treinam vocabulário; consulte as demonstrações para praticar Libras.</p></div>`}
-function startQuiz(){const pool=[...all()].sort(()=>Math.random()-.5);quiz=pool.slice(0,Math.min(8,pool.length));qIndex=0;qScore=0;qLocked=false;navigate('quiz')}
-function quizPage(){if(!quiz.length)return `${head('Quiz e desafios','Responda sobre o vocabulário escolar e conquiste pontos!')}<div class="quiz-card center"><div style="font-size:65px">🎯</div><h2>Pronta para um desafio?</h2><p class="muted">8 questões sobre o significado das palavras. Atenção: este quiz não avalia a execução correta dos sinais.</p>${btn('Começar quiz','startquiz','')}</div><div class="panel"><h3>Desafio do dia</h3><p>Estude cinco palavras na biblioteca e marque-as como estudadas. Acompanhe seus registros no painel.</p>${btn('Ver biblioteca','go:biblioteca')}</div>`;if(qIndex>=quiz.length)return `<div class="quiz-card center"><div style="font-size:65px">🏆</div><h1>Desafio concluído!</h1><h2>${qScore} de ${quiz.length} respostas corretas</h2><p>Você ganhou ${qScore*10} pontos. Continue praticando!</p>${btn('Jogar novamente','startquiz','')} ${btn('Ver meu progresso','go:painel')}</div>`;let x=quiz[qIndex];let others=all().filter(a=>a.id!==x.id&&a.description!==x.description).sort(()=>Math.random()-.5).slice(0,3);if(!window.quizOptions||window.quizQ!==qIndex){window.quizOptions=[x,...others].sort(()=>Math.random()-.5);window.quizQ=qIndex}return `${head('Quiz de vocabulário','Escolha a palavra correspondente à explicação.')}<div class="quiz-card"><div class="page-header"><span class="badge">QUESTÃO ${qIndex+1} DE ${quiz.length}</span><strong>${qScore*10} pontos nesta rodada</strong></div><div class="progressbar" style="margin:16px 0"><div style="width:${qIndex/quiz.length*100}%"></div></div><h2>Qual palavra combina com esta descrição?</h2><p style="font-size:19px;color:#45658d">${esc(x.description)}</p><div class="options">${window.quizOptions.map(o=>`<button class="option" data-action="answer:${o.id}">${esc(o.word)}</button>`).join('')}</div><div id="quizFeedback" role="status" style="margin-top:15px"></div></div>`}
-const SCENARIOS=[['Uma estudante precisa pedir ajuda','Como organizar uma forma acessível de solicitar apoio em sala?',['Usar recurso visual e combinar sinais previamente com a turma.','Falar mais alto e virar de costas.','Supor que todos fazem leitura labial.'],0],['A turma vai começar uma atividade','Como garantir que a orientação seja acessível?',['Dar o aviso apenas pelo alto-falante.','Oferecer instruções visuais, verificar a compreensão e usar Libras quando possível.','Evitar explicar a atividade.'],1],['Durante o recreio','Um colega quer incluir um estudante surdo na brincadeira.',['Afastar-se porque não conhece Libras.','Pedir que outro colega responda por ele.','Buscar comunicação visual, respeitar a preferência da pessoa e aprender sinais.'],2]];
-function situations(){return `${head('Situações escolares','Pratique escolhas inclusivas para o cotidiano.') }<div class="notice">Estas são situações de reflexão sobre acessibilidade, não aulas de tradução nem avaliação de fluência em Libras.</div>${SCENARIOS.map((s,i)=>`<div class="scenario"><span class="badge">SITUAÇÃO ${i+1}</span><h3>${s[0]}</h3><p>${s[1]}</p><div class="options">${s[2].map((o,j)=>`<button class="option" data-action="situation:${i}:${j}">${esc(o)}</button>`).join('')}</div><div id="scenario${i}" role="status"></div></div>`).join('')}`}
-function lists(){let names=Object.keys(data.lists);if(!data.lists[currentList])currentList=names[0];return `${head('Minhas listas','Organize o vocabulário das suas aulas.',btn('+ Nova lista','newlist',''))}<div class="grid2"><div class="panel"><h3>Suas listas</h3>${names.map(n=>`<div class="list-row"><button class="btn ${n===currentList?'':'outline'} small" data-action="openlist:${encodeURIComponent(n)}">${esc(n)} (${data.lists[n].length})</button>${n!=='Minha aula'?btn('Excluir','deletelist:'+encodeURIComponent(n),'danger small'):''}</div>`).join('')}</div><div class="panel"><h3>${esc(currentList)}</h3>${(data.lists[currentList]||[]).map(id=>get(id)).filter(Boolean).map(x=>`<div class="list-row"><span>${esc(x.emoji)} <strong>${esc(x.word)}</strong></span><div class="actions">${btn('Ver','detail:'+x.id,'outline small')}${btn('Remover','remove:'+x.id,'danger small')}</div></div>`).join('')||'<p class="empty">Lista vazia. Abra a biblioteca para adicionar palavras.</p>'}<div class="actions">${btn('Adicionar palavras','go:biblioteca')}${btn('Imprimir lista','printlist')}</div></div></div>`}
-function dashboard(){const percent=data.answered?Math.round(100*data.correct/data.answered):0;const counts=CATS.map(c=>({name:c,total:all().filter(x=>x.category===c).length,done:data.completed.filter(id=>get(id)?.category===c).length}));return `${head('Meu progresso','Dados registrados somente neste navegador.') }<div class="stats"><div class="stat"><div class="number">${data.points} ⭐</div><div class="label">Pontos acumulados</div></div><div class="stat"><div class="number">${percent}%</div><div class="label">Acertos nos quizzes (${data.answered} respostas)</div></div><div class="stat"><div class="number">${data.completed.length}/${all().length}</div><div class="label">Palavras estudadas</div></div></div><div class="grid2"><div class="panel"><h2>Estudo por categoria</h2>${counts.map(x=>`<div class="barline"><strong>${esc(x.name)}</strong><div class="progressbar"><div style="width:${x.total?x.done/x.total*100:0}%"></div></div><small>${x.done}/${x.total}</small></div>`).join('')}</div><div class="panel"><h2>Atividades recentes</h2>${data.history.slice(-8).reverse().map(h=>`<div class="list-row"><span>${esc(h.what)}</span><small>${esc(h.date)}</small></div>`).join('')||'<p class="empty">Nenhuma atividade registrada ainda.</p>'}<div class="actions">${btn('Exportar dados JSON','exportdata')}${btn('Apagar meus dados','reset','danger')}</div></div></div>`}
-function teacher(){return `${head('Área do professor','Cadastre palavras e associe vídeos demonstrativos previamente validados.') }<div class="grid2"><div class="panel"><h2>Adicionar vocabulário</h2><form id="newWord"><div class="field-group"><label for="word">Palavra ou expressão</label><input class="field" id="word" required maxlength="70"></div><div class="field-group"><label for="categoryNew">Categoria</label><select class="field" id="categoryNew">${CATS.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="field-group"><label for="desc">Explicação em português</label><textarea class="field" id="desc" maxlength="250" required></textarea></div><div class="field-group"><label for="videoNew">URL de vídeo (YouTube, MP4 ou WebM)</label><input class="field" type="url" id="videoNew" placeholder="https://.../video.mp4 ou YouTube"></div><button class="btn" type="submit">+ Salvar palavra</button></form></div><div class="panel"><h2>Vincular vídeos aos sinais</h2><p class="muted">Aceita links diretos (MP4/WebM) ou links do YouTube. Verifique os sinais com utilizadores fluentes de Libras antes de partilhar.</p><div class="field-group"><label for="videoWord">Palavra</label><select class="field" id="videoWord">${all().map(x=>`<option value="${esc(x.id)}">${esc(x.word)}</option>`).join('')}</select></div><div class="field-group"><label for="videoUrl">Link do vídeo (YouTube ou MP4 direto)</label><input id="videoUrl" class="field" type="url" placeholder="https://youtube.com/watch?v=... ou https://.../video.mp4"></div>${btn('Vincular vídeo','linkvideo','')}<p class="muted">Você também pode selecionar um ficheiro do computador. Ficará disponível apenas durante esta sessão.</p><input id="videoFile" type="file" accept="video/mp4,video/webm" class="field">${btn('Usar ficheiro nesta sessão','localvideo')}<div class="notice" style="margin-top:15px">Não há login nem base de dados remota nesta versão. O painel exibe apenas dados locais deste navegador.</div></div></div><div class="panel"><h2>Palavras criadas (${data.custom.length})</h2>${data.custom.map(x=>`<div class="list-row"><strong>${esc(x.word)}</strong>${btn('Excluir','deleteword:'+x.id,'danger small')}</div>`).join('')||'<p class="muted">Nenhuma palavra personalizada ainda.</p>'}</div>`}
-function log(what){data.history.push({what,date:new Date().toLocaleString('pt-BR')});data.history=data.history.slice(-100);save()}
+function flashcards() {
+  const items = all();
+  const x = items[flashIndex % items.length];
+  return `${head('Flashcards','Estude palavras do cotidiano. Vire o cartão para descobrir a explicação.')}
+  <div class="panel flash center" data-action="flip" role="button" tabindex="0" aria-label="Virar flashcard">
+    <span class="badge">CARTÃO ${(flashIndex % items.length) + 1} DE ${items.length}</span>
+    <span style="font-size:55px;margin:22px">${esc(x.emoji)}</span>
+    <div class="word">${flashRevealed ? esc(x.description) : esc(x.word)}</div>
+    <div class="hint">${flashRevealed ? 'Conceito em português — pratique o sinal com um vídeo validado.' : 'Toque para virar o cartão'}</div>
+  </div>
+  <div class="center">
+    <div class="actions" style="justify-content:center">${btn('← Anterior','flashprev')}${btn('Virar cartão','flip','')}${btn('Próximo →','flashnext')}</div>
+    <p class="muted">Os cartões treinam vocabulário; consulte as demonstrações para praticar Libras.</p>
+  </div>`;
+}
 
-// ==========================================
-// CAPTURA DE EVENTOS
-// ==========================================
+function startQuiz() {
+  const pool = [...all()].sort(() => Math.random() - .5);
+  quiz = pool.slice(0, Math.min(8, pool.length));
+  qIndex = 0; qScore = 0; qLocked = false;
+  navigate('quiz');
+}
+
+function quizPage() {
+  if (!quiz.length) return `${head('Quiz e desafios','Responda sobre o vocabulário escolar e conquiste pontos!')}<div class="quiz-card center"><div style="font-size:65px">🎯</div><h2>Pronta para um desafio?</h2><p class="muted">8 questões sobre o significado das palavras. Atenção: este quiz não avalia a execução correta dos sinais.</p>${btn('Começar quiz','startquiz','')}</div><div class="panel"><h3>Desafio do dia</h3><p>Estude cinco palavras na biblioteca e marque-as como estudadas. Acompanhe seus registros no painel.</p>${btn('Ver biblioteca','go:biblioteca')}</div>`;
+  if (qIndex >= quiz.length) return `<div class="quiz-card center"><div style="font-size:65px">🏆</div><h1>Desafio concluído!</h1><h2>${qScore} de ${quiz.length} respostas corretas</h2><p>Você ganhou ${qScore*10} pontos. Continue praticando!</p>${btn('Jogar novamente','startquiz','')} ${btn('Ver meu progresso','go:painel')}</div>`;
+  let x = quiz[qIndex];
+  let others = all().filter(a => a.id !== x.id && a.description !== x.description).sort(() => Math.random() - .5).slice(0, 3);
+  if (!window.quizOptions || window.quizQ !== qIndex) { window.quizOptions = [x, ...others].sort(() => Math.random() - .5); window.quizQ = qIndex; }
+  return `${head('Quiz de vocabulário','Escolha a palavra correspondente à explicação.')}
+  <div class="quiz-card">
+    <div class="page-header"><span class="badge">QUESTÃO ${qIndex + 1} DE ${quiz.length}</span><strong>${qScore * 10} pontos nesta rodada</strong></div>
+    <div class="progressbar" style="margin:16px 0"><div style="width:${(qIndex / quiz.length) * 100}%"></div></div>
+    <h2>Qual palavra combina com esta descrição?</h2>
+    <p style="font-size:19px;color:#45658d">${esc(x.description)}</p>
+    <div class="options">${window.quizOptions.map(o => `<button class="option" data-action="answer:${o.id}">${esc(o.word)}</button>`).join('')}</div>
+    <div id="quizFeedback" role="status" style="margin-top:15px"></div>
+  </div>`;
+}
+
+const SCENARIOS = [
+  ['Uma estudante precisa pedir ajuda','Como organizar uma forma acessível de solicitar apoio em sala?',['Usar recurso visual e combinar sinais previamente com a turma.','Falar mais alto e virar de costas.','Supor que todos fazem leitura labial.'],0],
+  ['A turma vai começar uma atividade','Como garantir que a orientação seja acessível?',['Dar o aviso apenas pelo alto-falante.','Oferecer instruções visuais, verificar a compreensão e usar Libras quando possível.','Evitar explicar a atividade.'],1],
+  ['Durante o recreio','Um colega quer incluir um estudante surdo na brincadeira.',['Afastar-se porque não conhece Libras.','Pedir que outro colega responda por ele.','Buscar comunicação visual, respeitar a preferência da pessoa e aprender sinais.'],2]
+];
+
+function situations() {
+  return `${head('Situações escolares','Pratique escolhas inclusivas para o cotidiano.')}
+  <div class="notice">Estas são situações de reflexão sobre acessibilidade, não aulas de tradução nem avaliação de fluência em Libras.</div>
+  ${SCENARIOS.map((s, i) => `<div class="scenario"><span class="badge">SITUAÇÃO ${i + 1}</span><h3>${s[0]}</h3><p>${s[1]}</p><div class="options">${s[2].map((o, j) => `<button class="option" data-action="situation:${i}:${j}">${esc(o)}</button>`).join('')}</div><div id="scenario${i}" role="status"></div></div>`).join('')}`;
+}
+
+function lists() {
+  let names = Object.keys(data.lists);
+  if (!data.lists[currentList]) currentList = names[0];
+  return `${head('Minhas listas','Organize o vocabulário das suas aulas.',btn('+ Nova lista','newlist',''))}
+  <div class="grid2">
+    <div class="panel">
+      <h3>Suas listas</h3>
+      ${names.map(n => `<div class="list-row"><button class="btn ${n === currentList ? '' : 'outline'} small" data-action="openlist:${encodeURIComponent(n)}">${esc(n)} (${data.lists[n].length})</button>${n !== 'Minha aula' ? btn('Excluir','deletelist:' + encodeURIComponent(n),'danger small') : ''}</div>`).join('')}
+    </div>
+    <div class="panel">
+      <h3>${esc(currentList)}</h3>
+      ${(data.lists[currentList] || []).map(id => get(id)).filter(Boolean).map(x => `<div class="list-row"><span>${esc(x.emoji)} <strong>${esc(x.word)}</strong></span><div class="actions">${btn('Ver','detail:' + x.id,'outline small')}${btn('Remover','remove:' + x.id,'danger small')}</div></div>`).join('') || '<p class="empty">Lista vazia. Abra a biblioteca para adicionar palavras.</p>'}
+      <div class="actions">${btn('Adicionar palavras','go:biblioteca')}${btn('Imprimir lista','printlist')}</div>
+    </div>
+  </div>`;
+}
+
+function dashboard() {
+  const percent = data.answered ? Math.round(100 * data.correct / data.answered) : 0;
+  const counts = CATS.map(c => ({ name: c, total: all().filter(x => x.category === c).length, done: data.completed.filter(id => get(id)?.category === c).length }));
+  return `${head('Meu progresso','Dados registrados somente neste navegador.')}
+  <div class="stats">
+    <div class="stat"><div class="number">${data.points} ⭐</div><div class="label">Pontos acumulados</div></div>
+    <div class="stat"><div class="number">${percent}%</div><div class="label">Acertos nos quizzes (${data.answered} respostas)</div></div>
+    <div class="stat"><div class="number">${data.completed.length}/${all().length}</div><div class="label">Palavras estudadas</div></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Estudo por categoria</h2>
+      ${counts.map(x => `<div class="barline"><strong>${esc(x.name)}</strong><div class="progressbar"><div style="width:${x.total ? (x.done / x.total) * 100 : 0}%"></div></div><small>${x.done}/${x.total}</small></div>`).join('')}
+    </div>
+    <div class="panel">
+      <h2>Atividades recentes</h2>
+      ${data.history.slice(-8).reverse().map(h => `<div class="list-row"><span>${esc(h.what)}</span><small>${esc(h.date)}</small></div>`).join('') || '<p class="empty">Nenhuma atividade registrada ainda.</p>'}
+      <div class="actions">${btn('Exportar dados JSON','exportdata')}${btn('Apagar meus dados','reset','danger')}</div>
+    </div>
+  </div>`;
+}
+
+function teacher() {
+  return `${head('Área do professor','Cadastre palavras e associe vídeos demonstrativos previamente validados.')}
+  <div class="grid2">
+    <div class="panel">
+      <h2>Adicionar vocabulário</h2>
+      <form id="newWord">
+        <div class="field-group"><label for="word">Palavra ou expressão</label><input class="field" id="word" required maxlength="70"></div>
+        <div class="field-group"><label for="categoryNew">Categoria</label><select class="field" id="categoryNew">${CATS.map(c => `<option>${c}</option>`).join('')}</select></div>
+        <div class="field-group"><label for="desc">Explicação em português</label><textarea class="field" id="desc" maxlength="250" required></textarea></div>
+        <div class="field-group"><label for="videoNew">URL de vídeo (YouTube, MP4 ou WebM)</label><input class="field" type="url" id="videoNew" placeholder="https://.../video.mp4 ou YouTube"></div>
+        <button class="btn" type="submit">+ Salvar palavra</button>
+      </form>
+    </div>
+    <div class="panel">
+      <h2>Vincular vídeos aos sinais</h2>
+      <p class="muted">Aceita links diretos (MP4/WebM) ou links do YouTube. Verifique os sinais com utilizadores fluentes de Libras antes de partilhar.</p>
+      <div class="field-group"><label for="videoWord">Palavra</label><select class="field" id="videoWord">${all().map(x => `<option value="${esc(x.id)}">${esc(x.word)}</option>`).join('')}</select></div>
+      <div class="field-group"><label for="videoUrl">Link do vídeo (YouTube ou MP4 direto)</label><input id="videoUrl" class="field" type="url" placeholder="https://youtube.com/watch?v=... ou https://.../video.mp4"></div>
+      ${btn('Vincular vídeo','linkvideo','')}
+      <p class="muted">Também pode selecionar um ficheiro do computador (disponível apenas durante esta sessão).</p>
+      <input id="videoFile" type="file" accept="video/mp4,video/webm" class="field">
+      ${btn('Usar ficheiro nesta sessão','localvideo')}
+      <div class="notice" style="margin-top:15px">Não há base de dados remota nesta versão. O painel exibe apenas dados locais deste navegador.</div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Palavras criadas (${data.custom.length})</h2>
+    ${data.custom.map(x => `<div class="list-row"><strong>${esc(x.word)}</strong>${btn('Excluir','deleteword:' + x.id,'danger small')}</div>`).join('') || '<p class="muted">Nenhuma palavra personalizada ainda.</p>'}
+  </div>`;
+}
+
+function log(what) {
+  data.history.push({ what, date: new Date().toLocaleString('pt-BR') });
+  data.history = data.history.slice(-100);
+  save();
+}
+
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-action]');
-  if(!b) return;
+  if (!b) return;
   const a = b.dataset.action;
   const [cmd, ...arg] = a.split(':');
   const id = arg.join(':');
@@ -285,10 +392,10 @@ document.addEventListener('click', e => {
   if (cmd === 'go') return navigate(id);
   if (cmd === 'playvideo') return openVideoModal(id);
   if (cmd === 'detail') { detailId = id; return navigate('sinal'); }
-  if (cmd === 'favorite') { data.favorites = data.favorites.includes(id) ? data.favorites.filter(i=>i!==id) : [...data.favorites, id]; save(); return navigate(page); }
-  if (cmd === 'complete') { if(!data.completed.includes(id)){ data.completed.push(id); data.points += 5; log('Estudou: '+get(id).word); toast('+5 pontos!'); } return navigate('sinal'); }
-  if (cmd === 'speed') { let v = document.querySelector('video'); if(v) v.playbackRate = Number(id); return; }
-  if (cmd === 'addtolist') { const n = $('listToAdd') ? $('listToAdd').value : ''; if(n && !data.lists[n].includes(id)) data.lists[n].push(id); save(); return toast('Palavra adicionada!'); }
+  if (cmd === 'favorite') { data.favorites = data.favorites.includes(id) ? data.favorites.filter(i => i !== id) : [...data.favorites, id]; save(); return navigate(page); }
+  if (cmd === 'complete') { if (!data.completed.includes(id)) { data.completed.push(id); data.points += 5; log('Estudou: ' + get(id).word); toast('+5 pontos!'); } return navigate('sinal'); }
+  if (cmd === 'speed') { let v = document.querySelector('video'); if (v) v.playbackRate = Number(id); return; }
+  if (cmd === 'addtolist') { const n = $('listToAdd') ? $('listToAdd').value : ''; if (n && !data.lists[n].includes(id)) data.lists[n].push(id); save(); return toast('Palavra adicionada!'); }
   if (cmd === 'flip') { flashRevealed = !flashRevealed; return navigate('flashcards'); }
   if (cmd === 'flashnext' || cmd === 'flashprev') { flashIndex = (flashIndex + (cmd === 'flashnext' ? 1 : all().length - 1)) % all().length; flashRevealed = false; return navigate('flashcards'); }
   if (cmd === 'startquiz') { window.quizQ = -1; return startQuiz(); }
@@ -342,7 +449,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.matches('.flash')) { e.preventDefault(); e.target.click(); }
 });
 
-// Inicialização segura no arranque
 function initApp() {
   document.querySelectorAll('nav button').forEach(b => {
     b.addEventListener('click', () => navigate(b.dataset.page));
